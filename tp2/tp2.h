@@ -477,19 +477,81 @@ bool List<T>::ListIter::at_first() const {
 template <typename T>
 bool List<T>::ListIter::insert_after(const T&value) {
     // TODO: insertar un valor detrás del actual con new.
-    return false;
+    Node* nuevo = new Node(value);
+    if(curr == nullptr){ 
+        nuevo->prev = nullptr;
+        nuevo->next = nullptr;
+        list->head = nuevo;
+        list->tail = nuevo;
+        curr = nuevo;
+    }
+    else{
+        nuevo->prev = curr;
+        nuevo->next = curr->next;
+        if(curr->next != nullptr){
+            curr->next->prev = nuevo;
+        }
+        else{
+            list->tail = nuevo;
+        }
+        curr->next = nuevo;
+    }
+    list->size++;
+    return true;
 }
 
 template <typename T>
 bool List<T>::ListIter::insert_before(const T&value) {
     // TODO: insertar un valor delante del actual con new.
-    return false;
+    Node* nuevo = new Node(value);
+    if(curr == nullptr){
+        nuevo->prev = nullptr;
+        nuevo->next = nullptr;
+        list->head = nuevo;
+        list->tail = nuevo;
+        curr = nuevo;
+    }
+    else{
+        nuevo->next = curr;
+        nuevo->prev = curr->prev;
+        if(curr->prev != nullptr){
+            curr->prev->next = nuevo;
+        }
+        else{
+            list->head = nuevo;
+        }
+        curr->prev = nuevo;
+    }
+    list->size++;
+    return true;
 }
 
 template <typename T>
 T List<T>::ListIter::remove() {
     // TODO: sacar el nodo actual (con delete), reposicionar el iterador
     // y devolver el valor que tenía.
+    Node* viejo = curr;
+    T valor = viejo->value;
+    Node* siguiente = curr->next;
+    Node* anterior = curr->prev;
+    if(anterior != nullptr){
+        anterior->next = siguiente;
+    }
+    else{
+        list->head = siguiente;
+    }
+
+    if(siguiente != nullptr){
+        siguiente->prev = anterior;
+    }
+    else{
+        list->tail = anterior;
+    }
+
+    curr = (siguiente != nullptr) ? siguiente : anterior;
+    delete viejo;
+    list->size--;
+    return valor;
 }
 
 #endif // TP2_H
