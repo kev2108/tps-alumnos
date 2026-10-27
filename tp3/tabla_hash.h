@@ -2,6 +2,7 @@
 #define TABLA_HASH_H
 
 #include <cstddef>
+#include <vector>
 
 #include "funcion_hash.h"
 
@@ -26,6 +27,13 @@ class TablaHash {
     // COMPLETAR: la representacion la eligen ustedes (que guardan, y que hay
     // en cada bucket). Pueden agregar tambien funciones auxiliares privadas.
     // Lo que el Iterador necesite de aca tiene que estar declarado antes que el.
+    struct Par {
+        K clave;
+        V valor;
+    };
+    std::vector< std::vector<Par> > buckets; //[ [ (clave, valor)], [(clave, valor)] ] 
+    size_t n;
+
 
   public:
     static const size_t FACTOR_DE_CARGA_MAXIMO = 2;
