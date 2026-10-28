@@ -439,6 +439,9 @@ List<T>::ListIter::ListIter(List *list, List::Node *start) {
 template <typename T>
 bool List<T>::ListIter::forward() {
     // TODO: avanzar una posición si se puede.
+    if (curr == nullptr) {
+        return false;
+    }
     if(curr->next != nullptr){
         curr=curr->next;
         return true;
@@ -449,6 +452,9 @@ bool List<T>::ListIter::forward() {
 template <typename T>
 bool List<T>::ListIter::backward() {
     // TODO: retroceder una posición si se puede.
+    if (curr == nullptr) {
+        return false;
+    }
     if(curr->prev != nullptr){
         curr=curr->prev;
         return true;
@@ -543,12 +549,13 @@ T List<T>::ListIter::remove() {
 
     if(siguiente != nullptr){
         siguiente->prev = anterior;
+        curr=siguiente;
     }
     else{
         list->tail = anterior;
+        curr=anterior;
     }
 
-    curr = (siguiente != nullptr) ? siguiente : anterior;
     delete viejo;
     list->size--;
     return valor;

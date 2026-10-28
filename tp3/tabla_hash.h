@@ -143,6 +143,8 @@ class TablaHash {
 template <typename K, typename V>
 TablaHash<K, V>::TablaHash(size_t capacidad_inicial) {
     // COMPLETAR
+    buckets.resize(capacidad_inicial);
+    n=0;
 }
 
 template <typename K, typename V>
@@ -153,29 +155,53 @@ TablaHash<K, V>::~TablaHash() {
 template <typename K, typename V>
 void TablaHash<K, V>::insertar(const K& clave, const V& valor) {
     // COMPLETAR
+    if (n + 1 > FACTOR_DE_CARGA_MAXIMO * buckets.size()){
+        std::vector<std::vector<Par>> nuevos_buckets(buckets.size() * 2);
+        for (size_t i = 0; i < buckets.size(); i++) {
+            for (size_t j = 0; j < buckets[i].size(); j++) {
+                Par par = buckets[i][j];
+                size_t nuevo_indice = funcion_hash(par.clave) % nuevos_buckets.size();
+                nuevos_buckets[nuevo_indice].push_back(par);
+            }
+        }
+        buckets.swap(nuevos_buckets);
+    }
+    size_t indice = funcion_hash(clave) % buckets.size();
+    buckets[indice].push_back({clave,valor});
+    n++;
 }
 
 template <typename K, typename V>
 void TablaHash<K, V>::eliminar(const K& clave) {
     // COMPLETAR
+    size_t indice = funcion_hash(clave) % buckets.size();
+    for(size_t i=0; i<buckets[indice].size(); i++){
+        if(buckets[indice][i].clave == clave){
+            
+        }
+    }
 }
 
 template <typename K, typename V>
 V* TablaHash<K, V>::buscar(const K& clave) {
     // COMPLETAR
-    return nullptr;
+    size_t indice = funcion_hash(clave) % buckets.size();
+    for (size_t i = 0; i < buckets[indice].size(); i++) {
+    if (buckets[indice][i].clave == clave) {
+        return &buckets[indice][i].valor;
+    }
+}
 }
 
 template <typename K, typename V>
 size_t TablaHash<K, V>::cantidad() {
     // COMPLETAR
-    return 0;
+    return n;
 }
 
 template <typename K, typename V>
 size_t TablaHash<K, V>::capacidad() {
-    // COMPLETAR
-    return 0;
+    return buckets.size();
 }
 
 template <typename K, typename V>
