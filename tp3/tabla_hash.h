@@ -91,6 +91,9 @@ class TablaHash {
       private:
         // COMPLETAR: la representacion la eligen ustedes. Desde aca se puede
         // usar la parte privada de la tabla.
+        TablaHash* tabla;
+        size_t bucket;
+        size_t pos;
 
         // Para que crear_iterador() pueda armar el iterador.
         friend class TablaHash;
@@ -101,7 +104,7 @@ class TablaHash {
         // Costo: O(1).
         bool hay_mas() {
             // COMPLETAR
-            return false;
+            return bucket < tabla->buckets.size();
         }
 
         // Pre:  hay_mas().
@@ -109,7 +112,7 @@ class TablaHash {
         // Costo: O(1).
         K clave() {
             // COMPLETAR (reemplazar la linea de abajo)
-            return K();
+            return tabla->buckets[bucket][pos].clave;
         }
 
         // Pre:  hay_mas().
@@ -117,7 +120,7 @@ class TablaHash {
         // Costo: O(1).
         V valor() {
             // COMPLETAR (reemplazar la linea de abajo)
-            return V();
+            return tabla->buckets[bucket][pos].valor;
         }
 
         // Pre:  hay_mas().
@@ -126,6 +129,14 @@ class TablaHash {
         //        iterador y avanzar hasta el final) cuesta O(n + c).
         void avanzar() {
             // COMPLETAR
+            pos++;
+            if (pos >= tabla->buckets[bucket].size()) {
+                bucket++;
+                while (bucket < tabla->buckets.size() && tabla->buckets[bucket].empty()) {
+                    bucket++;
+                }
+                pos = 0;
+            }
         }
     };
 
@@ -176,8 +187,10 @@ void TablaHash<K, V>::eliminar(const K& clave) {
     // COMPLETAR
     size_t indice = funcion_hash(clave) % buckets.size();
     for(size_t i=0; i<buckets[indice].size(); i++){
-        if(buckets[indice][i].clave == clave){
-            
+        if (buckets[indice][i].clave == clave) {
+            buckets[indice].erase(buckets[indice].begin() + i);
+            n--;
+            return;
         }
     }
 }
@@ -187,10 +200,11 @@ V* TablaHash<K, V>::buscar(const K& clave) {
     // COMPLETAR
     size_t indice = funcion_hash(clave) % buckets.size();
     for (size_t i = 0; i < buckets[indice].size(); i++) {
-    if (buckets[indice][i].clave == clave) {
-        return &buckets[indice][i].valor;
+        if (buckets[indice][i].clave == clave) {
+            return &buckets[indice][i].valor;
+        }
     }
-}
+    return nullptr;
 }
 
 template <typename K, typename V>
@@ -207,8 +221,15 @@ size_t TablaHash<K, V>::capacidad() {
 template <typename K, typename V>
 size_t TablaHash<K, V>::colisiones() {
     // COMPLETAR
-    return 0;
+    size_t no_vacios = 0;
+    for (size_t i = 0; i < buckets.size(); i++) {
+        if (!buckets[i].empty()) {
+            no_vacios++;
+        }
+    }
+    return n - no_vacios;
 }
+
 
 // El "typename" le avisa al compilador que TablaHash<K, V>::Iterador es un tipo.
 template <typename K, typename V>
