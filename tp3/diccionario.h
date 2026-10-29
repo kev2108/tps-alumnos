@@ -97,7 +97,7 @@ class Diccionario {
         // Costo: O(c) en peor caso. Recorrer el diccionario entero cuesta
         //        O(n + c).
         void avanzar() {
-            return de_la_tabla.avanzar();
+            de_la_tabla.avanzar();
         }
     };
 
