@@ -17,6 +17,12 @@
 //
 // Invariante de representacion:
 //   COMPLETAR: escriban aca el invariante de la representacion que elijan.
+//   - buckets tiene al menos un bucket (la capacidad c es buckets.size()).
+//   - Cada par esta guardado en el bucket que le corresponde, o sea en
+//     buckets[funcion_hash(clave) % c].
+//   - No hay claves repetidas en la tabla.
+//   - n es la cantidad total de pares (sumando todos los buckets).
+//   - n <= FACTOR_DE_CARGA_MAXIMO * c.
 //
 // Complejidades: n es la cantidad de claves guardadas y c la capacidad.
 // "Promedio" supone que la funcion de hash reparte las claves de manera
@@ -87,6 +93,15 @@ class TablaHash {
     //
     // Invariante de representacion:
     //   COMPLETAR: escriban aca el invariante de la representacion que elijan.
+    //   - tabla apunta a la tabla que se esta recorriendo.
+    //   - bucket esta entre 0 y la cantidad de buckets de la tabla.
+    //   - Si bucket es menor que la cantidad de buckets, el iterador esta
+    //     parado sobre un par que existe: buckets[bucket][pos].
+    //   - Si bucket es igual a la cantidad de buckets, el iterador ya
+    //     recorrio todo (esta al final).
+    //   - Los pares que faltan recorrer son los que estan desde pos en
+    //     adelante en el bucket actual y los de los buckets siguientes.
+    
     class Iterador {
       private:
         // COMPLETAR: la representacion la eligen ustedes. Desde aca se puede
@@ -161,6 +176,8 @@ TablaHash<K, V>::TablaHash(size_t capacidad_inicial) {
 template <typename K, typename V>
 TablaHash<K, V>::~TablaHash() {
     // COMPLETAR
+    // DEjamos el destructor vacio porque
+    // buckets es un vector de vector y libera la memoria solo 
 }
 
 template <typename K, typename V>
@@ -236,6 +253,13 @@ template <typename K, typename V>
 typename TablaHash<K, V>::Iterador TablaHash<K, V>::crear_iterador() {
     Iterador it;
     // COMPLETAR
+    it.tabla = this;
+    it.bucket = 0;
+    it.pos = 0;
+    // Salteo los cajones vacíos del principio.
+    while (it.bucket < buckets.size() && buckets[it.bucket].empty()) { //Salteo los cajones vacios
+        it.bucket++;
+    }
     return it;
 }
 
