@@ -46,3 +46,11 @@ void Goleadores::imprimir_por_nombre() {
 void Goleadores::imprimir_por_goles() {
     // OPTATIVO
 }
+
+
+
+
+
+
+
+

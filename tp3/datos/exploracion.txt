@@ -1,0 +1,80 @@
+EXPLORACIÓN DE FUNCIONES HASH
+================================================================================
+
+Se evaluaron tres funciones hash distintas para claves de tipo string: polinomial, suma de
+caracteres y longitud de la cadena. Cada función se probó con capacidades iniciales de 8 y
+15, utilizando el archivo de datos del grupo, que contiene 106 jugadores diferentes.
+
+
+Función hash          Capacidad inicial    Capacidad final    Colisiones
+-----------------------------------------------------------------------
+Polinomial                       8                  64             51
+Polinomial                      15                  60             60
+Suma de caracteres               8                  64             56
+Suma de caracteres              15                  60             54
+Longitud del nombre              8                  64             87
+Longitud del nombre             15                  60             87
+
+
+Funciones:
+--------------------------------------------------------------------------------
+
+size_t LongNombre(const std::string& clave) {
+    return clave.size();
+}
+
+
+size_t SumCaracteres(const std::string& clave) {
+    size_t suma = 0;
+
+    for (char c : clave) {
+        suma += c;
+    }
+
+    return suma;
+}
+
+
+size_t Polinomial(const std::string& clave) {
+    size_t suma = 0;
+    for (char c: clave){
+        suma = suma * 31 + c;
+    }
+    return suma;
+}
+
+
+ANÁLISIS DE LOS RESULTADOS
+================================================================================
+
+La función que usa la longitud del nombre fue la que más colisiones tuvo. Esto tiene sentido
+porque muchos jugadores tienen nombres con la misma cantidad de letras, entonces
+terminan generando el mismo resultado.
+
+La función que suma los caracteres funcionó mejor, aunque tiene el problema de que si dos
+nombres tienen las mismas letras en distinto orden, el resultado es igual.
+
+Por último, la polinomial también tuvo buenos resultados. A diferencia de la suma, va
+multiplicando el resultado anterior por 31 antes de agregar cada letra, por lo que el orden de
+las letras influye en el resultado.
+
+
+COMPARACIÓN DE CAPACIDADES
+================================================================================
+
+También probamos con capacidades iniciales de 8 y 15. Cuando empezamos con 8, la tabla
+terminó con 64 buckets, mientras que cuando empezamos con 15 terminó con 60. Esto
+pasa porque nuestra tabla duplica su capacidad cuando necesita más espacio.
+
+Notamos que cambiar la capacidad inicial también modificó la cantidad de colisiones en
+algunas funciones. Por ejemplo, la polinomial pasó de 51 a 60 colisiones, mientras que la
+suma pasó de 56 a 54. En cambio, la función de longitud tuvo 87 en ambos casos.
+
+
+CONCLUSIÓN
+================================================================================
+
+Decidimos quedarnos con la función polinomial porque obtuvo el menor número de
+colisiones en una de las pruebas y porque tiene en cuenta tanto las letras del nombre como
+el orden en el que aparecen. Aunque la función de suma también tuvo buenos resultados,
+consideramos que la polinomial es una mejor opción para nuestra tabla.
